@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "my-app",
+    "name": "Todo app",
     "slug": "my-app",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -8,18 +8,19 @@
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/splash.png",
+      "image": "./assets/images/VTask_.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#1C98ED"
     },
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      }
+        "foregroundImage": "./assets/images/VTask.png",
+        "backgroundColor": "#1C98ED"
+      },
+      "package": "com.victuk.myapp"
     },
     "web": {
       "bundler": "metro",
@@ -31,6 +32,15 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "cdc6771a-337b-4380-900e-3d3d6a63849d"
+      }
+    },
+    "owner": "victuk"
   }
 }

@@ -1,37 +1,94 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
+import { Stack } from "expo-router";
+import { useEffect, useState } from "react";
+import * as LocalAuthentication from "expo-local-authentication";
+import { Alert, Pressable, Text, View } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { SimpleLineIcons } from "@expo/vector-icons";
+import {
+  Button,
+  MD3LightTheme as DefaultTheme,
+  Divider,
+  Menu,
+  PaperProvider,
+} from "react-native-paper";
+import { useAuthStore } from "@/store/AuthStore";
 
-import { useColorScheme } from '@/hooks/useColorScheme';
-
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
+const theme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: "black",
+    secondary: "black",
+  },
+};
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
 
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
+  const [visible, setVisible] = useState(false);
 
-  if (!loaded) {
-    return null;
-  }
+  const openMenu = () => setVisible(true);
+
+  const closeMenu = () => setVisible(false);
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-    </ThemeProvider>
+    <GestureHandlerRootView>
+      <PaperProvider theme={theme}>
+        <Stack screenOptions={{ headerShadowVisible: false }}>
+          <Stack.Screen
+            name="index"
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="home"
+            options={{
+              title: "VTask App",
+              // headerTitleAlign: "center",
+              headerBackVisible: false,
+              headerRight: () => {
+                return (
+                  <MenuButton
+                    openMenu={openMenu}
+                    closeMenu={closeMenu}
+                    visible={visible}
+                  />
+                );
+              },
+            }}
+          />
+        </Stack>
+      </PaperProvider>
+    </GestureHandlerRootView>
   );
 }
+interface MenuInterface {
+  openMenu: () => void;
+  closeMenu: () => void;
+  visible: boolean;
+}
+
+const MenuButton = ({ openMenu, closeMenu, visible }: MenuInterface) => {
+
+  const setLoggedIn = useAuthStore(state => state.setLoggedIn);
+
+  return (
+    <Menu
+    contentStyle={{backgroundColor: "white"}}
+      style={{marginTop: 50}}
+      visible={visible}
+      onDismiss={closeMenu}
+      anchorPosition="bottom"
+      anchor={<Pressable onPress={openMenu}><SimpleLineIcons name="options-vertical" size={18} /></Pressable>}
+    >
+        {/* <Menu.Item onPress={() => {}} title="Profile" /> */}
+        {/* <Menu.Item onPress={() => {}} title="Settings" /> */}
+        <Menu.Item onPress={() => {
+          setLoggedIn(false);
+        }} title="Log Out" />
+        {/* <Menu.Item onPress={() => {}} title="Item 2" />
+        <Divider />
+        <Menu.Item onPress={() => {}} title="Item 3" /> */}
+    </Menu>
+  );
+};
